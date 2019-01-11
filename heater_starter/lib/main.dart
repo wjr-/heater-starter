@@ -31,7 +31,32 @@ enum HeaterState { stopped, starting, heating, scheduled }
 class _HeaterStarterState extends State<HeaterStarterHomePage> {
   HeaterState _heaterState = HeaterState.stopped;
 
-  void _startHeater() async {
+  Future<void> _startHeater() async {
+    var minutes = await showDialog<int>(
+        context: context,
+        builder: (BuildContext context) {
+          return SimpleDialog(title: const Text('Heat'), children: <Widget>[
+            SimpleDialogOption(
+              onPressed: () {
+                Navigator.pop(context, 10);
+              },
+              child: const Text('10'),
+            ),
+            SimpleDialogOption(
+              onPressed: () {
+                Navigator.pop(context, 15);
+              },
+              child: const Text('15'),
+            ),
+            SimpleDialogOption(
+              onPressed: () {
+                Navigator.pop(context, 20);
+              },
+              child: const Text('20'),
+            ),
+          ]);
+        });
+
     var start = new StartMessage(pin: '0000', duration: 40);
     SmsSender sender = new SmsSender();
     String address = '012934';
@@ -42,6 +67,10 @@ class _HeaterStarterState extends State<HeaterStarterHomePage> {
       _heaterState = HeaterState.heating;
     });
   }
+
+/*
+    
+  }*/
 
   void _stopHeater() {
     setState(() {
