@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:sms/sms.dart';
+
+import 'heater_control_messages.dart';
 
 void main() => runApp(HeaterStarter());
 
@@ -28,7 +31,13 @@ enum HeaterState { stopped, starting, heating, scheduled }
 class _HeaterStarterState extends State<HeaterStarterHomePage> {
   HeaterState _heaterState = HeaterState.stopped;
 
-  void _startHeater() {
+  void _startHeater() async {
+    var start = new StartMessage(pin: '0000', duration: 40);
+    SmsSender sender = new SmsSender();
+    String address = '012934';
+
+    sender.sendSms(new SmsMessage(address, start.toString()));
+
     setState(() {
       _heaterState = HeaterState.heating;
     });
