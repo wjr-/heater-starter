@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-import 'home_page.dart';
+import 'home_screen.dart';
 
-void main() => runApp(HeaterStarter());
+void main() => runApp(HeaterStarterApp());
 
-class HeaterStarter extends StatelessWidget {
+class HeaterStarterApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -12,7 +12,7 @@ class HeaterStarter extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: HeaterStarterHomePage(title: 'Heater Starter'),
+      home: HeaterStarterHomeScreen(title: 'Heater Starter'),
     );
   }
 }

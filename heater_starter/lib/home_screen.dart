@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:sms/sms.dart';
 
-import 'settings_page.dart';
+import 'settings_screen.dart';
 import 'heater_control_messages.dart';
 
-class HeaterStarterHomePage extends StatefulWidget {
-  HeaterStarterHomePage({Key key, this.title}) : super(key: key);
+class HeaterStarterHomeScreen extends StatefulWidget {
+  HeaterStarterHomeScreen({Key key, this.title}) : super(key: key);
   final String title;
 
   @override
@@ -14,7 +14,7 @@ class HeaterStarterHomePage extends StatefulWidget {
 
 enum HeaterState { stopped, starting, heating, scheduled }
 
-class _HeaterStarterState extends State<HeaterStarterHomePage> {
+class _HeaterStarterState extends State<HeaterStarterHomeScreen> {
   HeaterState _heaterState = HeaterState.stopped;
 
   Future<void> _startHeater() async {
@@ -75,7 +75,7 @@ class _HeaterStarterState extends State<HeaterStarterHomePage> {
   void _settings() {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => HeaterStarterSettingsPage()),
+      MaterialPageRoute(builder: (context) => HeaterStarterSettingsScreen()),
     );
   }
 

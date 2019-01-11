@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-class HeaterStarterSettingsPage extends StatefulWidget {
-  HeaterStarterSettingsPage({Key key}) : super(key: key) {}
+class HeaterStarterSettingsScreen extends StatefulWidget {
+  HeaterStarterSettingsScreen({Key key}) : super(key: key) {}
 
   @override
   _HeaterStarterSettingsState createState() => _HeaterStarterSettingsState();
 }
 
-class _HeaterStarterSettingsState extends State<HeaterStarterSettingsPage> {
+class _HeaterStarterSettingsState extends State<HeaterStarterSettingsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
