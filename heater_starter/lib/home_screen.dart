@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import 'app_state.dart';
 import 'settings_screen.dart';
-import 'heater_control.dart';
 
 class HeaterStarterHomeScreen extends StatefulWidget {
   HeaterStarterHomeScreen({Key key, this.title, this.appState})
@@ -16,9 +15,12 @@ class HeaterStarterHomeScreen extends StatefulWidget {
 }
 
 class _HeaterStarterHomeState extends State<HeaterStarterHomeScreen> {
-  _HeaterStarterHomeState(this.appState);
+  _HeaterStarterHomeState(this.appState) {
+    _heaterState = this.appState.getHeaterState();
+  }
 
   final AppState appState;
+  HeaterState _heaterState;
 
   void _settings() {
     Navigator.push(
@@ -57,8 +59,10 @@ class _HeaterStarterHomeState extends State<HeaterStarterHomeScreen> {
       return;
     }
 
-    setState(() {
-      appState.startHeater(minutes);
+    await appState.startHeater(minutes).then((_) {
+      setState(() {
+        _heaterState = appState.getHeaterState();
+      });
     });
   }
 

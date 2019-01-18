@@ -5,11 +5,20 @@ enum HeaterState { stopped, starting, heating, scheduled }
 class AppState {
   AppState() {
     this._heaterState = HeaterState.stopped;
-    this._control = HeaterControl("1234567", "0000");
+    _pin = "0000";
+    _phoneNumber = "1234567";
+
+    _control = HeaterControl(_pin, _phoneNumber);
   }
 
   HeaterState _heaterState;
   HeaterControl _control;
+  String _pin;
+  String _phoneNumber;
+
+  HeaterState getHeaterState() {
+    return _heaterState;
+  }
 
   Future<void> startHeater(int minutes) async {
     if (canStart()) {

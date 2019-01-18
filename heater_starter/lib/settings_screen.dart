@@ -1,13 +1,20 @@
 import 'package:flutter/material.dart';
 
+import 'app_state.dart';
+
 class HeaterStarterSettingsScreen extends StatefulWidget {
-  HeaterStarterSettingsScreen({Key key}) : super(key: key) {}
+  HeaterStarterSettingsScreen({Key key, this.appState}) : super(key: key);
+  final AppState appState;
 
   @override
-  _HeaterStarterSettingsState createState() => _HeaterStarterSettingsState();
+  _HeaterStarterSettingsState createState() =>
+      _HeaterStarterSettingsState(appState);
 }
 
 class _HeaterStarterSettingsState extends State<HeaterStarterSettingsScreen> {
+  _HeaterStarterSettingsState(this.appState);
+  final AppState appState;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
