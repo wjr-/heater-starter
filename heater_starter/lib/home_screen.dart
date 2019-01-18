@@ -15,12 +15,9 @@ class HeaterStarterHomeScreen extends StatefulWidget {
 }
 
 class _HeaterStarterHomeState extends State<HeaterStarterHomeScreen> {
-  _HeaterStarterHomeState(this.appState) {
-    _heaterState = this.appState.getHeaterState();
-  }
+  _HeaterStarterHomeState(this.appState);
 
   final AppState appState;
-  HeaterState _heaterState;
 
   void _settings() {
     Navigator.push(
@@ -63,9 +60,7 @@ class _HeaterStarterHomeState extends State<HeaterStarterHomeScreen> {
     }
 
     await appState.startHeater(minutes).then((_) {
-      setState(() {
-        _heaterState = appState.getHeaterState();
-      });
+      setState(() {});
     });
   }
 
@@ -92,7 +87,9 @@ class _HeaterStarterHomeState extends State<HeaterStarterHomeScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text(this.appState.toString()),
+            Text(appState.heaterState.toString()),
+            Text(appState.phoneNumber),
+            Text(appState.pin),
             RaisedButton(
               onPressed: appState.canStart() ? _startHeater : null,
               child: Row(
