@@ -23,11 +23,24 @@ class _HeaterStarterSettingsState extends State<HeaterStarterSettingsScreen> {
   final _phoneNumberController = TextEditingController();
   final _pinController = TextEditingController();
 
+  void _saveSettings() {
+    appState.phoneNumber = _phoneNumberController.text;
+    appState.pin = _pinController.text;
+    Navigator.pop(context);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text("Settings"),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.check),
+            tooltip: "Save",
+            onPressed: _saveSettings,
+          )
+        ],
       ),
       body: Center(
         child: Column(
@@ -54,15 +67,6 @@ class _HeaterStarterSettingsState extends State<HeaterStarterSettingsScreen> {
                 ],
               ),
             ),
-            RaisedButton(
-                onPressed: () {
-                  appState.phoneNumber = _phoneNumberController.text;
-                  appState.pin = _pinController.text;
-                  Navigator.pop(context);
-                },
-                child: Row(
-                  children: <Widget>[Text('Ok')],
-                ))
           ],
         ),
       ),
