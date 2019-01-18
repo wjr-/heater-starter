@@ -13,5 +13,6 @@ class HeaterControl {
 
     return await sender
         .sendSms(new SmsMessage(phoneNumber, startMessage.toString()));
+    // handle errors?
   }
 }

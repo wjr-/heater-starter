@@ -5,16 +5,16 @@ enum HeaterState { stopped, starting, heating, scheduled }
 class AppState {
   AppState() {
     this._heaterState = HeaterState.stopped;
-    _pin = "0000";
-    _phoneNumber = "1234567";
+    pin = "0000";
+    phoneNumber = "1234567";
 
-    _control = HeaterControl(_pin, _phoneNumber);
+    _control = HeaterControl(pin, phoneNumber);
   }
 
   HeaterState _heaterState;
   HeaterControl _control;
-  String _pin;
-  String _phoneNumber;
+  String pin;
+  String phoneNumber;
 
   HeaterState getHeaterState() {
     return _heaterState;

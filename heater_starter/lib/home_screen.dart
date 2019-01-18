@@ -4,7 +4,7 @@ import 'app_state.dart';
 import 'settings_screen.dart';
 
 class HeaterStarterHomeScreen extends StatefulWidget {
-  HeaterStarterHomeScreen({Key key, this.title, this.appState})
+  HeaterStarterHomeScreen({Key key, this.title, @required this.appState})
       : super(key: key);
 
   final String title;
@@ -25,7 +25,10 @@ class _HeaterStarterHomeState extends State<HeaterStarterHomeScreen> {
   void _settings() {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => HeaterStarterSettingsScreen()),
+      MaterialPageRoute(
+          builder: (context) => HeaterStarterSettingsScreen(
+                appState: appState,
+              )),
     );
   }
 
