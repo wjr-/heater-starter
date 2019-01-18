@@ -1,21 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:sms/sms.dart';
 
+import 'app_state.dart';
 import 'settings_screen.dart';
 import 'heater_control_messages.dart';
 
 class HeaterStarterHomeScreen extends StatefulWidget {
-  HeaterStarterHomeScreen({Key key, this.title}) : super(key: key);
+  HeaterStarterHomeScreen({Key key, this.title, this.appState})
+      : super(key: key);
+
   final String title;
+  final AppState appState;
 
   @override
-  _HeaterStarterState createState() => _HeaterStarterState();
+  _HeaterStarterHomeState createState() => _HeaterStarterHomeState(appState);
 }
 
-enum HeaterState { stopped, starting, heating, scheduled }
+class _HeaterStarterHomeState extends State<HeaterStarterHomeScreen> {
+  _HeaterStarterHomeState(this.appState);
 
-class _HeaterStarterState extends State<HeaterStarterHomeScreen> {
-  HeaterState _heaterState = HeaterState.stopped;
+  final AppState appState;
+
+  void _settings() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => HeaterStarterSettingsScreen()),
+    );
+  }
 
   Future<void> _startHeater() async {
     var minutes = await showDialog<int>(
@@ -54,29 +65,14 @@ class _HeaterStarterState extends State<HeaterStarterHomeScreen> {
     sender.sendSms(new SmsMessage(address, start.toString()));
 
     setState(() {
-      _heaterState = HeaterState.heating;
+      appState.startHeater();
     });
   }
 
   void _stopHeater() {
     setState(() {
-      _heaterState = HeaterState.stopped;
+      appState.stopHeater();
     });
-  }
-
-  bool _canStart() {
-    return _heaterState == HeaterState.stopped;
-  }
-
-  bool _canStop() {
-    return _heaterState == HeaterState.heating;
-  }
-
-  void _settings() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => HeaterStarterSettingsScreen()),
-    );
   }
 
   @override
@@ -96,15 +92,15 @@ class _HeaterStarterState extends State<HeaterStarterHomeScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text(_heaterState.toString()),
+            Text(this.appState.toString()),
             RaisedButton(
-              onPressed: _canStart() ? _startHeater : null,
+              onPressed: appState.canStart() ? _startHeater : null,
               child: Row(
                 children: <Widget>[Icon(Icons.play_arrow), Text('Heat')],
               ),
             ),
             RaisedButton(
-              onPressed: _canStop() ? _stopHeater : null,
+              onPressed: appState.canStop() ? _stopHeater : null,
               child: Row(
                 children: <Widget>[Icon(Icons.stop), Text('Stop')],
               ),
