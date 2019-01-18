@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:sms/sms.dart';
 
 import 'app_state.dart';
 import 'settings_screen.dart';
-import 'heater_control_messages.dart';
+import 'heater_control.dart';
 
 class HeaterStarterHomeScreen extends StatefulWidget {
   HeaterStarterHomeScreen({Key key, this.title, this.appState})
@@ -58,14 +57,8 @@ class _HeaterStarterHomeState extends State<HeaterStarterHomeScreen> {
       return;
     }
 
-    var start = new StartMessage(pin: '0000', duration: minutes);
-    SmsSender sender = new SmsSender();
-    String address = '012934';
-
-    sender.sendSms(new SmsMessage(address, start.toString()));
-
     setState(() {
-      appState.startHeater();
+      appState.startHeater(minutes);
     });
   }
 

@@ -1,15 +1,21 @@
+import 'heater_control.dart';
+
 enum HeaterState { stopped, starting, heating, scheduled }
 
 class AppState {
   AppState() {
-    _heaterState = HeaterState.stopped;
+    this._heaterState = HeaterState.stopped;
+    this._control = HeaterControl("1234567", "0000");
   }
 
   HeaterState _heaterState;
+  HeaterControl _control;
 
-  void startHeater() {
+  Future<void> startHeater(int minutes) async {
     if (canStart()) {
-      _heaterState = HeaterState.heating;
+      await _control.start(minutes).then((value) {
+        _heaterState = HeaterState.heating;
+      });
     }
   }
 
