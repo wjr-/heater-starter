@@ -18,8 +18,7 @@ class HeaterStarterState extends State<HeaterStarterApp> {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: HeaterStarterHomeScreen(
-          title: 'Heater Starter', appState: AppState()),
+      home: HeaterStarterHomeScreen(title: 'Heater Starter'),
     );
   }
 }

@@ -2,20 +2,22 @@ import 'heater_control.dart';
 
 enum HeaterState { stopped, starting, heating, scheduled }
 
-class AppState {
-  AppState() {
-    heaterState = HeaterState.stopped;
-    pin = "0000";
-    phoneNumber = "1234567";
-  }
-
-  HeaterState heaterState;
+class Settings {
   String pin;
   String phoneNumber;
+}
+
+class AppState {
+  AppState({this.settings}) {
+    heaterState = HeaterState.stopped;
+  }
+
+  Settings settings;
+  HeaterState heaterState;
 
   Future<void> startHeater(int minutes) async {
     if (canStart()) {
-      var control = HeaterControl(phoneNumber, pin);
+      var control = HeaterControl(settings.phoneNumber, settings.pin);
       await control.start(minutes).then((value) {
         heaterState = HeaterState.heating;
       });

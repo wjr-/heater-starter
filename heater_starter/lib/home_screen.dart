@@ -1,25 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'app_state.dart';
 import 'settings_screen.dart';
 
 class HeaterStarterHomeScreen extends StatefulWidget {
-  HeaterStarterHomeScreen({Key key, this.title, @required this.appState})
-      : super(key: key);
+  HeaterStarterHomeScreen({Key key, this.title}) : super(key: key);
 
   final String title;
-  final AppState appState;
 
   @override
-  _HeaterStarterHomeState createState() => _HeaterStarterHomeState(appState);
+  _HeaterStarterHomeState createState() => _HeaterStarterHomeState();
 }
 
 class _HeaterStarterHomeState extends State<HeaterStarterHomeScreen> {
-  _HeaterStarterHomeState(this.appState);
+  _HeaterStarterHomeState();
 
-  final AppState appState;
+  AppState appState;
 
-  void _settings() {
+  void _goToSettings() {
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -52,6 +51,12 @@ class _HeaterStarterHomeState extends State<HeaterStarterHomeScreen> {
               },
               child: const Text('20'),
             ),
+            SimpleDialogOption(
+              onPressed: () {
+                Navigator.pop(context, 25);
+              },
+              child: const Text('25'),
+            ),
           ]);
         });
 
@@ -71,7 +76,29 @@ class _HeaterStarterHomeState extends State<HeaterStarterHomeScreen> {
   }
 
   @override
+  void initState() {
+    _loadSettings().then((settings) {
+      setState(() {
+        appState = new AppState(settings: settings);
+      });
+    });
+
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    if (appState == null) {
+      return Container(
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[Text('Loading..')],
+          ),
+        ),
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
@@ -79,7 +106,7 @@ class _HeaterStarterHomeState extends State<HeaterStarterHomeScreen> {
           IconButton(
             icon: Icon(Icons.settings),
             tooltip: 'Settings',
-            onPressed: _settings,
+            onPressed: _goToSettings,
           )
         ],
       ),
@@ -88,8 +115,8 @@ class _HeaterStarterHomeState extends State<HeaterStarterHomeScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Text(appState.heaterState.toString()),
-            Text(appState.phoneNumber),
-            Text(appState.pin),
+            Text(appState.settings.phoneNumber),
+            Text(appState.settings.pin),
             RaisedButton(
               onPressed: appState.canStart() ? _startHeater : null,
               child: Row(
@@ -112,5 +139,15 @@ class _HeaterStarterHomeState extends State<HeaterStarterHomeScreen> {
         ),
       ),
     );
+  }
+
+  Future<Settings> _loadSettings() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+
+    Settings settings = new Settings();
+    settings.pin = preferences.getString('pin') ?? "";
+    settings.phoneNumber = preferences.getString('phoneNumber') ?? "";
+
+    return settings;
   }
 }
