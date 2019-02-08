@@ -23,7 +23,7 @@ class _HeaterStarterHomeState extends State<HeaterStarterHomeScreen> {
 
   AppState appState;
   Timer _timer;
-  Duration _timeLeft = new Duration();
+  String _statusText = "Ready";
   //FlutterLocalNotificationsPlugin notifications;
 
   @override
@@ -69,10 +69,12 @@ class _HeaterStarterHomeState extends State<HeaterStarterHomeScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Text(
-                _timeLeft.toString(),
-                style: new TextStyle(fontSize: 40),
-              ),
+              Padding(
+                  padding: EdgeInsets.only(bottom: 50),
+                  child: Text(
+                    _statusText,
+                    style: new TextStyle(fontSize: 50),
+                  )),
               MaterialButton(
                 color: Theme.of(context).buttonColor,
                 height: 50,
@@ -125,6 +127,12 @@ class _HeaterStarterHomeState extends State<HeaterStarterHomeScreen> {
                 ),
                 SimpleDialogOption(
                   onPressed: () {
+                    Navigator.pop(context, 2);
+                  },
+                  child: const Text('2'),
+                ),
+                SimpleDialogOption(
+                  onPressed: () {
                     Navigator.pop(context, 10);
                   },
                   child: const Text('10'),
@@ -156,22 +164,35 @@ class _HeaterStarterHomeState extends State<HeaterStarterHomeScreen> {
 
     await appState.startHeater(minutes).then((_) {
       _timer = new Timer.periodic(new Duration(seconds: 10), _tick);
-      setState(() {
-        _timeLeft = new Duration(minutes: minutes);
-      });
+      _updateStatusDisplay(new Duration(minutes: minutes));
     });
   }
 
   void _tick(Timer timer) {
     appState.run();
 
-    if (appState.heaterState == HeaterState.heating) {
-    } else {
+    if (appState.heaterState != HeaterState.heating) {
       _timer.cancel();
     }
 
+    _updateStatusDisplay(appState.getRemainingTime());
+  }
+
+  void _updateStatusDisplay(Duration remainingTime) {
+    var newText = "??";
+
+    if (appState.heaterState == HeaterState.stopped) {
+      newText = "Ready";
+    } else if (appState.heaterState == HeaterState.heating) {
+      if (remainingTime.inMinutes < 1 && remainingTime.inSeconds < 10) {
+        newText = "Stopping..";
+      } else {
+        newText = remainingTime.toString().substring(2, 6) + "0";
+      }
+    }
+
     setState(() {
-      _timeLeft = appState.getRemainingTime();
+      _statusText = newText;
     });
   }
 }
