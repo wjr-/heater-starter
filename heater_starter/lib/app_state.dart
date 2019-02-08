@@ -69,7 +69,7 @@ class AppState {
 
   Future<void> _saveStateToPreferences() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
-    preferences.setInt("heaterState", heaterState as int);
+    preferences.setInt("heaterState", heaterState.index);
     preferences.setInt(
         "startTimeMilliseconds", startTime.millisecondsSinceEpoch);
     preferences.setInt("runningTimeMinutes", runningTime.inMinutes);
