@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 // won't work with 1.0?
 
 import 'app_state.dart';
+import 'app_state_persistence.dart';
 import 'settings_screen.dart';
 //import 'notifications.dart';
 
@@ -32,7 +33,7 @@ class _HeaterStarterHomeState extends State<HeaterStarterHomeScreen> {
 
     //notifications = Notifications.Initialize();
 
-    _loadAppState().then((appState) {
+    new Persistence().loadAppState().then((appState) {
       setState(() {
         _appState = appState;
       });
@@ -73,15 +74,22 @@ class _HeaterStarterHomeState extends State<HeaterStarterHomeScreen> {
                   padding: EdgeInsets.only(bottom: 50),
                   child: Text(
                     _statusText,
-                    style: new TextStyle(fontSize: 50),
+                    style: new TextStyle(
+                        fontSize: 35, fontWeight: FontWeight.w500),
                   )),
               MaterialButton(
                 color: Theme.of(context).buttonColor,
-                height: 50,
+                height: 60,
                 onPressed: _appState.canStart() ? _startHeater : null,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[Icon(Icons.play_arrow), Text('Start')],
+                  children: <Widget>[
+                    Icon(Icons.play_arrow),
+                    Text(
+                      'Start',
+                      style: new TextStyle(fontSize: 20),
+                    )
+                  ],
                 ),
               ),
             ],
@@ -89,32 +97,6 @@ class _HeaterStarterHomeState extends State<HeaterStarterHomeScreen> {
         ),
       ),
     );
-  }
-
-  Future<Settings> _loadSettings() async {
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-
-    Settings settings = new Settings();
-    settings.pin = preferences.getString('pin') ?? "";
-    settings.phoneNumber = preferences.getString('phoneNumber') ?? "";
-
-    return settings;
-  }
-
-  Future<AppState> _loadAppState() async {
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-
-    var settings = await _loadSettings();
-
-    var appState = new AppState(settings: settings);
-    appState.heaterState =
-        HeaterState.values[preferences.getInt("heaterState") ?? 0];
-    appState.startTime = new DateTime.fromMillisecondsSinceEpoch(
-        preferences.getInt("startTimeMilliseconds") ?? 0);
-    appState.runningTime =
-        new Duration(minutes: preferences.getInt("runningTimeMinutes") ?? 0);
-
-    return appState;
   }
 
   void _goToSettings() {

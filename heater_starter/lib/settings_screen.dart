@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import 'app_state.dart';
+import 'app_state_persistence.dart';
 
 class HeaterStarterSettingsScreen extends StatefulWidget {
   HeaterStarterSettingsScreen({Key key, @required this.appState})
@@ -26,12 +26,12 @@ class _HeaterStarterSettingsState extends State<HeaterStarterSettingsScreen> {
   final _pinController = TextEditingController();
 
   void _saveSettings() {
-    var phoneNumber = _phoneNumberController.text;
-    var pin = _pinController.text;
+    var settings = new Settings();
+    settings.phoneNumber = _phoneNumberController.text;
+    settings.pin = _pinController.text;
 
-    _saveToPreferences(pin, phoneNumber).then((_) {
-      appState.settings.pin = pin;
-      appState.settings.phoneNumber = phoneNumber;
+    new Persistence().saveSettings(settings).then((_) {
+      appState.settings = settings;
     });
 
     Navigator.pop(context);
@@ -89,11 +89,5 @@ class _HeaterStarterSettingsState extends State<HeaterStarterSettingsScreen> {
     _phoneNumberController.dispose();
     _pinController.dispose();
     super.dispose();
-  }
-
-  Future<void> _saveToPreferences(String pin, String phoneNumber) async {
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    preferences.setString('pin', pin);
-    preferences.setString('phoneNumber', phoneNumber);
   }
 }

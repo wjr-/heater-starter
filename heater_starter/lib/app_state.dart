@@ -1,4 +1,4 @@
-import 'package:shared_preferences/shared_preferences.dart';
+import 'app_state_persistence.dart';
 
 import 'heater_control.dart';
 
@@ -35,7 +35,7 @@ class AppState {
         startTime = DateTime.now();
         runningTime = new Duration(minutes: minutes);
 
-        _saveStateToPreferences();
+        new Persistence().saveAppState(this);
       });
     }
   }
@@ -63,16 +63,8 @@ class AppState {
       heaterState = HeaterState.stopped;
       runningTime = new Duration();
 
-      _saveStateToPreferences();
+      new Persistence().saveAppState(this);
     }
-  }
-
-  Future<void> _saveStateToPreferences() async {
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    preferences.setInt("heaterState", heaterState.index);
-    preferences.setInt(
-        "startTimeMilliseconds", startTime.millisecondsSinceEpoch);
-    preferences.setInt("runningTimeMinutes", runningTime.inMinutes);
   }
 
   Duration _hasBeenRunningFor() => DateTime.now().difference(startTime);
