@@ -21,7 +21,7 @@ class HeaterStarterHomeScreen extends StatefulWidget {
 class _HeaterStarterHomeState extends State<HeaterStarterHomeScreen> {
   _HeaterStarterHomeState();
 
-  AppState appState;
+  AppState _appState;
   Timer _timer;
   String _statusText = "Ready";
   //FlutterLocalNotificationsPlugin notifications;
@@ -32,16 +32,16 @@ class _HeaterStarterHomeState extends State<HeaterStarterHomeScreen> {
 
     //notifications = Notifications.Initialize();
 
-    _loadSettings().then((settings) {
+    _loadAppState().then((appState) {
       setState(() {
-        appState = new AppState(settings: settings);
+        _appState = appState;
       });
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    if (appState == null) {
+    if (_appState == null) {
       return Container(
         child: Center(
           child: Column(
@@ -78,7 +78,7 @@ class _HeaterStarterHomeState extends State<HeaterStarterHomeScreen> {
               MaterialButton(
                 color: Theme.of(context).buttonColor,
                 height: 50,
-                onPressed: appState.canStart() ? _startHeater : null,
+                onPressed: _appState.canStart() ? _startHeater : null,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[Icon(Icons.play_arrow), Text('Start')],
@@ -101,12 +101,28 @@ class _HeaterStarterHomeState extends State<HeaterStarterHomeScreen> {
     return settings;
   }
 
+  Future<AppState> _loadAppState() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+
+    var settings = await _loadSettings();
+
+    var appState = new AppState(settings: settings);
+    appState.heaterState =
+        HeaterState.values[preferences.getInt("heaterState") ?? 0];
+    appState.startTime = new DateTime.fromMillisecondsSinceEpoch(
+        preferences.getInt("startTimeMilliseconds") ?? 0);
+    appState.runningTime =
+        new Duration(minutes: preferences.getInt("runningTimeMinutes") ?? 0);
+
+    return appState;
+  }
+
   void _goToSettings() {
     Navigator.push(
       context,
       MaterialPageRoute(
           builder: (context) => HeaterStarterSettingsScreen(
-                appState: appState,
+                appState: _appState,
               )),
     );
   }
@@ -162,28 +178,28 @@ class _HeaterStarterHomeState extends State<HeaterStarterHomeScreen> {
       return;
     }
 
-    await appState.startHeater(minutes).then((_) {
+    await _appState.startHeater(minutes).then((_) {
       _timer = new Timer.periodic(new Duration(seconds: 10), _tick);
       _updateStatusDisplay(new Duration(minutes: minutes));
     });
   }
 
   void _tick(Timer timer) {
-    appState.run();
+    _appState.run();
 
-    if (appState.heaterState != HeaterState.heating) {
+    if (_appState.heaterState != HeaterState.heating) {
       _timer.cancel();
     }
 
-    _updateStatusDisplay(appState.getRemainingTime());
+    _updateStatusDisplay(_appState.getRemainingTime());
   }
 
   void _updateStatusDisplay(Duration remainingTime) {
     var newText = "??";
 
-    if (appState.heaterState == HeaterState.stopped) {
+    if (_appState.heaterState == HeaterState.stopped) {
       newText = "Ready";
-    } else if (appState.heaterState == HeaterState.heating) {
+    } else if (_appState.heaterState == HeaterState.heating) {
       if (remainingTime.inMinutes < 1 && remainingTime.inSeconds < 10) {
         newText = "Stopping..";
       } else {

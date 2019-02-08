@@ -1,3 +1,5 @@
+import 'package:shared_preferences/shared_preferences.dart';
+
 import 'heater_control.dart';
 
 enum HeaterState { stopped, starting, heating, scheduled }
@@ -14,12 +16,12 @@ class AppState {
 
   Settings settings;
   HeaterState heaterState;
-  DateTime _startTime;
-  Duration _runningTime;
+  DateTime startTime;
+  Duration runningTime;
 
   Duration getRemainingTime() {
     if (heaterState == HeaterState.heating) {
-      return _runningTime - _hasBeenRunningFor();
+      return runningTime - _hasBeenRunningFor();
     } else {
       return new Duration();
     }
@@ -30,8 +32,10 @@ class AppState {
       var control = HeaterControl(settings.phoneNumber, settings.pin);
       await control.start(minutes).then((value) {
         heaterState = HeaterState.heating;
-        _startTime = DateTime.now();
-        _runningTime = new Duration(minutes: minutes);
+        startTime = DateTime.now();
+        runningTime = new Duration(minutes: minutes);
+
+        _saveStateToPreferences();
       });
     }
   }
@@ -45,7 +49,7 @@ class AppState {
       return;
     }
 
-    if (_hasBeenRunningFor() > _runningTime) {
+    if (_hasBeenRunningFor() > runningTime) {
       _stopHeater();
     }
   }
@@ -57,9 +61,19 @@ class AppState {
   void _stopHeater() {
     if (_canStop()) {
       heaterState = HeaterState.stopped;
-      _runningTime = null;
+      runningTime = new Duration();
+
+      _saveStateToPreferences();
     }
   }
 
-  Duration _hasBeenRunningFor() => DateTime.now().difference(_startTime);
+  Future<void> _saveStateToPreferences() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    preferences.setInt("heaterState", heaterState as int);
+    preferences.setInt(
+        "startTimeMilliseconds", startTime.millisecondsSinceEpoch);
+    preferences.setInt("runningTimeMinutes", runningTime.inMinutes);
+  }
+
+  Duration _hasBeenRunningFor() => DateTime.now().difference(startTime);
 }
