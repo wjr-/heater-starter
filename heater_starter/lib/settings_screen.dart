@@ -51,31 +51,34 @@ class _HeaterStarterSettingsState extends State<HeaterStarterSettingsScreen> {
         ],
       ),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Form(
-              key: _settingsFormKey,
-              child: Column(
-                children: <Widget>[
-                  TextFormField(
-                    keyboardType: TextInputType.phone,
-                    controller: _phoneNumberController,
-                    decoration: InputDecoration(
-                      labelText: "Phone number",
+        child: Padding(
+          padding: EdgeInsets.only(top: 30, left: 30, right: 30),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              Form(
+                key: _settingsFormKey,
+                child: Column(
+                  children: <Widget>[
+                    TextFormField(
+                      keyboardType: TextInputType.phone,
+                      controller: _phoneNumberController,
+                      decoration: InputDecoration(
+                        labelText: "Phone number",
+                      ),
                     ),
-                  ),
-                  TextFormField(
-                    keyboardType: TextInputType.number,
-                    controller: _pinController,
-                    decoration: InputDecoration(labelText: "PIN"),
-                    maxLength: 4,
-                    maxLengthEnforced: true,
-                  ),
-                ],
+                    TextFormField(
+                      keyboardType: TextInputType.number,
+                      controller: _pinController,
+                      decoration: InputDecoration(labelText: "PIN"),
+                      maxLength: 4,
+                      maxLengthEnforced: true,
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

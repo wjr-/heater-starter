@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'app_state.dart';
 import 'home_screen.dart';
 
 class HeaterStarterApp extends StatefulWidget {
@@ -16,7 +15,8 @@ class HeaterStarterState extends State<HeaterStarterApp> {
     return MaterialApp(
       title: 'Heater Starter',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        brightness: Brightness.dark,
+        primarySwatch: Colors.green,
       ),
       home: HeaterStarterHomeScreen(title: 'Heater Starter'),
     );
