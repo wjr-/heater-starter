@@ -10,7 +10,7 @@ class Persistence {
 
     var settings = await _loadSettings();
 
-    var appState = new AppState(settings: settings);
+    var appState = new AppState(settings);
     appState.heaterState =
         HeaterState.values[preferences.getInt("heaterState") ?? 0];
     appState.startTime = new DateTime.fromMillisecondsSinceEpoch(

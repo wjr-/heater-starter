@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 //import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 // won't work with 1.0?
 
@@ -34,9 +33,14 @@ class _HeaterStarterHomeState extends State<HeaterStarterHomeScreen> {
     //notifications = Notifications.Initialize();
 
     new Persistence().loadAppState().then((appState) {
-      setState(() {
-        _appState = appState;
-      });
+      _appState = appState;
+      _appState.run();
+
+      if (_appState.heaterState == HeaterState.heating) {
+        _startTimer();
+      }
+
+      _updateStatusDisplay();
     });
   }
 
@@ -117,17 +121,12 @@ class _HeaterStarterHomeState extends State<HeaterStarterHomeScreen> {
           return SimpleDialog(
               contentPadding: EdgeInsets.only(top: 12, left: 10, bottom: 12),
               children: <Widget>[
+                // TODO: prettify the dialog
                 SimpleDialogOption(
                   onPressed: () {
                     Navigator.pop(context, 1);
                   },
                   child: const Text('1'),
-                ),
-                SimpleDialogOption(
-                  onPressed: () {
-                    Navigator.pop(context, 2);
-                  },
-                  child: const Text('2'),
                 ),
                 SimpleDialogOption(
                   onPressed: () {
@@ -153,6 +152,24 @@ class _HeaterStarterHomeState extends State<HeaterStarterHomeScreen> {
                   },
                   child: const Text('25'),
                 ),
+                SimpleDialogOption(
+                  onPressed: () {
+                    Navigator.pop(context, 1);
+                  },
+                  child: const Text('30'),
+                ),
+                SimpleDialogOption(
+                  onPressed: () {
+                    Navigator.pop(context, 2);
+                  },
+                  child: const Text('35'),
+                ),
+                SimpleDialogOption(
+                  onPressed: () {
+                    Navigator.pop(context, 2);
+                  },
+                  child: const Text('40'),
+                ),
               ]);
         });
 
@@ -161,9 +178,13 @@ class _HeaterStarterHomeState extends State<HeaterStarterHomeScreen> {
     }
 
     await _appState.startHeater(minutes).then((_) {
-      _timer = new Timer.periodic(new Duration(seconds: 10), _tick);
+      _startTimer();
       _updateStatusDisplay(new Duration(minutes: minutes));
     });
+  }
+
+  void _startTimer() {
+    _timer = new Timer.periodic(new Duration(seconds: 5), _tick);
   }
 
   void _tick(Timer timer) {
@@ -173,11 +194,12 @@ class _HeaterStarterHomeState extends State<HeaterStarterHomeScreen> {
       _timer.cancel();
     }
 
-    _updateStatusDisplay(_appState.getRemainingTime());
+    _updateStatusDisplay();
   }
 
-  void _updateStatusDisplay(Duration remainingTime) {
+  void _updateStatusDisplay([Duration remainingTime]) {
     var newText = "??";
+    remainingTime = remainingTime ?? _appState.getRemainingTime();
 
     if (_appState.heaterState == HeaterState.stopped) {
       newText = "Ready";

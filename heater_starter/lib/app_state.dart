@@ -10,7 +10,7 @@ class Settings {
 }
 
 class AppState {
-  AppState({this.settings}) {
+  AppState(this.settings) {
     heaterState = HeaterState.stopped;
   }
 
