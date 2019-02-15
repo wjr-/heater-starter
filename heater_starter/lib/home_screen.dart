@@ -124,12 +124,6 @@ class _HeaterStarterHomeState extends State<HeaterStarterHomeScreen> {
                 // TODO: prettify the dialog
                 SimpleDialogOption(
                   onPressed: () {
-                    Navigator.pop(context, 1);
-                  },
-                  child: const Text('1'),
-                ),
-                SimpleDialogOption(
-                  onPressed: () {
                     Navigator.pop(context, 10);
                   },
                   child: const Text('10'),
@@ -178,6 +172,8 @@ class _HeaterStarterHomeState extends State<HeaterStarterHomeScreen> {
     }
 
     await _appState.startHeater(minutes).then((_) {
+      new Persistence().saveAppState(_appState);
+
       _startTimer();
       _updateStatusDisplay(new Duration(minutes: minutes));
     });
@@ -192,6 +188,7 @@ class _HeaterStarterHomeState extends State<HeaterStarterHomeScreen> {
 
     if (_appState.heaterState != HeaterState.heating) {
       _timer.cancel();
+      new Persistence().saveAppState(_appState);
     }
 
     _updateStatusDisplay();

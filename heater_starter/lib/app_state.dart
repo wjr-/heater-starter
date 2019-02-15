@@ -15,6 +15,7 @@ class AppState {
   }
 
   Settings settings;
+
   HeaterState heaterState;
   DateTime startTime;
   Duration runningTime;
@@ -34,8 +35,6 @@ class AppState {
         heaterState = HeaterState.heating;
         startTime = DateTime.now();
         runningTime = new Duration(minutes: minutes);
-
-        new Persistence().saveAppState(this);
       });
     }
   }
