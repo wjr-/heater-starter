@@ -148,19 +148,19 @@ class _HeaterStarterHomeState extends State<HeaterStarterHomeScreen> {
                 ),
                 SimpleDialogOption(
                   onPressed: () {
-                    Navigator.pop(context, 1);
+                    Navigator.pop(context, 30);
                   },
                   child: const Text('30'),
                 ),
                 SimpleDialogOption(
                   onPressed: () {
-                    Navigator.pop(context, 2);
+                    Navigator.pop(context, 35);
                   },
                   child: const Text('35'),
                 ),
                 SimpleDialogOption(
                   onPressed: () {
-                    Navigator.pop(context, 2);
+                    Navigator.pop(context, 40);
                   },
                   child: const Text('40'),
                 ),
