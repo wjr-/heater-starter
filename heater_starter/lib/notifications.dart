@@ -1,16 +1,36 @@
+import 'dart:async';
+
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 class Notifications {
-  static FlutterLocalNotificationsPlugin initialize() {
-    var androidSettings =
-        new AndroidInitializationSettings('@mipmap/ic_launcher');
+  FlutterLocalNotificationsPlugin _notificationsPlugin;
+
+  void initialize() {
+    var androidSettings = new AndroidInitializationSettings(
+        '@mipmap/ic_launcher'); // TODO set icon
     var iOSSettings = new IOSInitializationSettings();
     var initializationSettings =
         new InitializationSettings(androidSettings, iOSSettings);
 
-    var notificationsPlugin = new FlutterLocalNotificationsPlugin();
-    notificationsPlugin.initialize(initializationSettings);
+    this._notificationsPlugin = new FlutterLocalNotificationsPlugin();
+    this._notificationsPlugin.initialize(initializationSettings);
+  }
 
-    return notificationsPlugin;
+  Future<void> showHeaterRunningNotification(Duration duration) async {
+    var until = DateTime.now().add(duration);
+    var untilText = until.toIso8601String();
+    untilText = untilText.substring(11, 16);
+    return _showNotification("Heating", "Heating until " + untilText, 0);
+  }
+
+  Future<void> _showNotification(String title, String body, int id) async {
+    var androidPlatformChannelSpecifics = new AndroidNotificationDetails(
+        'heater_starter_notifications', 'Notifications', 'All notifications',
+        importance: Importance.Max, priority: Priority.High);
+    var iOSPlatformChannelSpecifics = new IOSNotificationDetails();
+    var platformChannelSpecifics = new NotificationDetails(
+        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+    return await _notificationsPlugin.show(
+        id, title, body, platformChannelSpecifics);
   }
 }

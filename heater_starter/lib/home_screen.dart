@@ -22,6 +22,7 @@ class _HeaterStarterHomeState extends State<HeaterStarterHomeScreen> {
 
   AppState _appState;
   Timer _timer;
+  Notifications _notifications;
   String _statusText = "Ready";
   FlutterLocalNotificationsPlugin notifications;
 
@@ -29,7 +30,8 @@ class _HeaterStarterHomeState extends State<HeaterStarterHomeScreen> {
   void initState() {
     super.initState();
 
-    notifications = Notifications.initialize();
+    _notifications = new Notifications();
+    _notifications.initialize();
 
     new Persistence().loadAppState().then((appState) {
       _appState = appState;
@@ -103,6 +105,8 @@ class _HeaterStarterHomeState extends State<HeaterStarterHomeScreen> {
   }
 
   void _goToSettings() {
+    _notifications.showHeaterRunningNotification(new Duration(minutes: 10));
+
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -121,6 +125,12 @@ class _HeaterStarterHomeState extends State<HeaterStarterHomeScreen> {
               contentPadding: EdgeInsets.only(top: 12, left: 10, bottom: 12),
               children: <Widget>[
                 // TODO: prettify the dialog
+                SimpleDialogOption(
+                  onPressed: () {
+                    Navigator.pop(context, 1);
+                  },
+                  child: const Text('1'),
+                ),
                 SimpleDialogOption(
                   onPressed: () {
                     Navigator.pop(context, 10);
@@ -170,11 +180,14 @@ class _HeaterStarterHomeState extends State<HeaterStarterHomeScreen> {
       return;
     }
 
-    await _appState.startHeater(minutes).then((_) {
+    var duration = new Duration(minutes: minutes);
+
+    await _appState.startHeater(duration).then((_) {
       new Persistence().saveAppState(_appState);
 
       _startTimer();
-      _updateStatusDisplay(new Duration(minutes: minutes));
+      _notifications.showHeaterRunningNotification(duration);
+      _updateStatusDisplay(duration);
     });
   }
 

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'app_state_persistence.dart';
 
 import 'heater_control.dart';
@@ -28,13 +30,13 @@ class AppState {
     }
   }
 
-  Future<void> startHeater(int minutes) async {
+  Future<void> startHeater(Duration duration) async {
     if (canStart()) {
       var control = HeaterControl(settings.phoneNumber, settings.pin);
-      await control.start(minutes).then((value) {
+      await control.start(duration.inMinutes).then((value) {
         heaterState = HeaterState.heating;
         startTime = DateTime.now();
-        runningTime = new Duration(minutes: minutes);
+        runningTime = duration;
       });
     }
   }
