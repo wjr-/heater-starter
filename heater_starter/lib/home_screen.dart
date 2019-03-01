@@ -1,13 +1,12 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-//import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-// won't work with 1.0?
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 import 'app_state.dart';
 import 'app_state_persistence.dart';
 import 'settings_screen.dart';
-//import 'notifications.dart';
+import 'notifications.dart';
 
 class HeaterStarterHomeScreen extends StatefulWidget {
   HeaterStarterHomeScreen({Key key, this.title}) : super(key: key);
@@ -24,13 +23,13 @@ class _HeaterStarterHomeState extends State<HeaterStarterHomeScreen> {
   AppState _appState;
   Timer _timer;
   String _statusText = "Ready";
-  //FlutterLocalNotificationsPlugin notifications;
+  FlutterLocalNotificationsPlugin notifications;
 
   @override
   void initState() {
     super.initState();
 
-    //notifications = Notifications.Initialize();
+    notifications = Notifications.initialize();
 
     new Persistence().loadAppState().then((appState) {
       _appState = appState;

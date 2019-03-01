@@ -1,7 +1,7 @@
-/*import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 class Notifications {
-  static FlutterLocalNotificationsPlugin Initialize() {
+  static FlutterLocalNotificationsPlugin initialize() {
     var androidSettings =
         new AndroidInitializationSettings('@mipmap/ic_launcher');
     var iOSSettings = new IOSInitializationSettings();
@@ -14,4 +14,3 @@ class Notifications {
     return notificationsPlugin;
   }
 }
-*/
