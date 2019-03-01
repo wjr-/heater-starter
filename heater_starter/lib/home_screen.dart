@@ -105,8 +105,6 @@ class _HeaterStarterHomeState extends State<HeaterStarterHomeScreen> {
   }
 
   void _goToSettings() {
-    _notifications.showHeaterRunningNotification(new Duration(minutes: 10));
-
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -200,6 +198,7 @@ class _HeaterStarterHomeState extends State<HeaterStarterHomeScreen> {
 
     if (_appState.heaterState != HeaterState.heating) {
       _timer.cancel();
+      _notifications.clear();
       new Persistence().saveAppState(_appState);
     }
 

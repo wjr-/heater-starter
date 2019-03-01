@@ -23,6 +23,10 @@ class Notifications {
     return _showNotification("Heating", "Heating until " + untilText, 0);
   }
 
+  Future<void> clear() async {
+    return _notificationsPlugin.cancel(0);
+  }
+
   Future<void> _showNotification(String title, String body, int id) async {
     var androidPlatformChannelSpecifics = new AndroidNotificationDetails(
         'heater_starter_notifications', 'Notifications', 'All notifications',
