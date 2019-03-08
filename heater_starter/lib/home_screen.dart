@@ -125,12 +125,6 @@ class _HeaterStarterHomeState extends State<HeaterStarterHomeScreen> {
                 // TODO: prettify the dialog
                 SimpleDialogOption(
                   onPressed: () {
-                    Navigator.pop(context, 1);
-                  },
-                  child: const Text('1'),
-                ),
-                SimpleDialogOption(
-                  onPressed: () {
                     Navigator.pop(context, 10);
                   },
                   child: const Text('10'),
