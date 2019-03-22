@@ -34,6 +34,13 @@ class _HeaterStarterHomeState extends State<HeaterStarterHomeScreen> {
     _notifications.initialize();
 
     new Persistence().loadAppState().then((appState) {
+      appState.addHeaterStartedCallback((_) => _startTimer());
+
+      appState.addHeaterStoppedCallback((_) => _timer.cancel());
+      appState.addHeaterStoppedCallback((_) => _notifications.clear());
+
+      appState.addHeaterRunningCallback((_) => _updateStatusDisplay());
+
       _appState = appState;
       _appState.run();
 
@@ -175,25 +182,14 @@ class _HeaterStarterHomeState extends State<HeaterStarterHomeScreen> {
     var duration = new Duration(minutes: minutes);
 
     await _appState.startHeater(duration).then((_) {
-      _startTimer();
       _notifications.showHeaterRunningNotification(duration);
       _updateStatusDisplay(duration);
     });
   }
 
   void _startTimer() {
-    _timer = new Timer.periodic(new Duration(seconds: 5), _tick);
-  }
-
-  void _tick(Timer timer) {
-    _appState.run();
-
-    if (_appState.heaterState != HeaterState.heating) {
-      _timer.cancel();
-      _notifications.clear();
-    }
-
-    _updateStatusDisplay();
+    _timer =
+        new Timer.periodic(new Duration(seconds: 5), (_) => _appState.run());
   }
 
   void _updateStatusDisplay([Duration remainingTime]) {

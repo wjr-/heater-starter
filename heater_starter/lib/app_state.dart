@@ -9,15 +9,19 @@ class Settings {
   String phoneNumber;
 }
 
-typedef Future<void> AppStateEventHandler(AppState appState);
+typedef void AppStateEventHandler(AppState appState);
 
 class AppState {
   AppState(this.settings, this.control) {
     heaterState = HeaterState.stopped;
   }
 
-  AppStateEventHandler onHeaterStarted;
-  AppStateEventHandler onHeaterStopped;
+  List<AppStateEventHandler> _onHeaterStarted =
+      new List<AppStateEventHandler>();
+  List<AppStateEventHandler> _onHeaterStopped =
+      new List<AppStateEventHandler>();
+  List<AppStateEventHandler> _onHeaterRunning =
+      new List<AppStateEventHandler>();
 
   Settings settings;
   HeaterControl control;
@@ -25,6 +29,18 @@ class AppState {
   HeaterState heaterState;
   DateTime startTime;
   Duration runningTime;
+
+  void addHeaterStartedCallback(AppStateEventHandler handler) {
+    _onHeaterStarted.add(handler);
+  }
+
+  void addHeaterStoppedCallback(AppStateEventHandler handler) {
+    _onHeaterStopped.add(handler);
+  }
+
+  void addHeaterRunningCallback(AppStateEventHandler handler) {
+    _onHeaterRunning.add(handler);
+  }
 
   Duration getRemainingTime() {
     if (heaterState == HeaterState.heating) {
@@ -43,9 +59,7 @@ class AppState {
         startTime = DateTime.now();
         runningTime = duration;
 
-        if (onHeaterStarted != null) {
-          onHeaterStarted(this);
-        }
+        _onHeaterStarted.forEach((callback) => callback(this));
       });
     }
   }
@@ -58,6 +72,8 @@ class AppState {
     if (heaterState != HeaterState.heating) {
       return;
     }
+
+    _onHeaterRunning.forEach((callback) => callback(this));
 
     if (_hasBeenRunningFor() > runningTime) {
       _stopHeater();
@@ -73,9 +89,7 @@ class AppState {
       heaterState = HeaterState.stopped;
       runningTime = new Duration();
 
-      if (onHeaterStopped != null) {
-        onHeaterStopped(this);
-      }
+      _onHeaterStopped.forEach((callback) => callback(this));
     }
   }
 

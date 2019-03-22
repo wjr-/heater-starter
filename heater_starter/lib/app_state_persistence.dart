@@ -18,8 +18,8 @@ class Persistence {
     appState.runningTime =
         new Duration(minutes: preferences.getInt("runningTimeMinutes") ?? 0);
 
-    appState.onHeaterStarted = _saveAppState;
-    appState.onHeaterStopped = _saveAppState;
+    appState.addHeaterStartedCallback(_saveAppState);
+    appState.addHeaterStoppedCallback(_saveAppState);
 
     return appState;
   }
@@ -30,7 +30,7 @@ class Persistence {
     preferences.setString('phoneNumber', settings.phoneNumber);
   }
 
-  Future<void> _saveAppState(AppState appState) async {
+  void _saveAppState(AppState appState) async {
     var preferences = await SharedPreferences.getInstance();
     preferences.setInt("heaterState", appState.heaterState.index);
     preferences.setInt(
