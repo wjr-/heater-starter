@@ -7,8 +7,7 @@ import "heater_control.dart";
 
 class Persistence {
   Future<AppState> loadAppState() async {
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-
+    var preferences = await SharedPreferences.getInstance();
     var settings = await _loadSettings();
 
     var appState = new AppState(settings, HeaterControl());
@@ -19,22 +18,24 @@ class Persistence {
     appState.runningTime =
         new Duration(minutes: preferences.getInt("runningTimeMinutes") ?? 0);
 
+    appState.onHeaterStarted = _saveAppState;
+    appState.onHeaterStopped = _saveAppState;
+
     return appState;
   }
 
-  Future<void> saveAppState(AppState appState) async {
-    SharedPreferences preferences = await SharedPreferences.getInstance();
+  Future<void> saveSettings(Settings settings) async {
+    var preferences = await SharedPreferences.getInstance();
+    preferences.setString('pin', settings.pin);
+    preferences.setString('phoneNumber', settings.phoneNumber);
+  }
+
+  Future<void> _saveAppState(AppState appState) async {
+    var preferences = await SharedPreferences.getInstance();
     preferences.setInt("heaterState", appState.heaterState.index);
     preferences.setInt(
         "startTimeMilliseconds", appState.startTime.millisecondsSinceEpoch);
     preferences.setInt("runningTimeMinutes", appState.runningTime.inMinutes);
-  }
-
-  Future<void> saveSettings(Settings settings) async {
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-
-    preferences.setString('pin', settings.pin);
-    preferences.setString('phoneNumber', settings.phoneNumber);
   }
 
   static Future<Settings> _loadSettings() async {

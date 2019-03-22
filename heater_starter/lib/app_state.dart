@@ -1,7 +1,5 @@
 import 'dart:async';
 
-import 'app_state_persistence.dart';
-
 import 'heater_control.dart';
 
 enum HeaterState { stopped, heating }
@@ -11,10 +9,15 @@ class Settings {
   String phoneNumber;
 }
 
+typedef Future<void> AppStateEventHandler(AppState appState);
+
 class AppState {
   AppState(this.settings, this.control) {
     heaterState = HeaterState.stopped;
   }
+
+  AppStateEventHandler onHeaterStarted;
+  AppStateEventHandler onHeaterStopped;
 
   Settings settings;
   HeaterControl control;
@@ -39,6 +42,10 @@ class AppState {
         heaterState = HeaterState.heating;
         startTime = DateTime.now();
         runningTime = duration;
+
+        if (onHeaterStarted != null) {
+          onHeaterStarted(this);
+        }
       });
     }
   }
@@ -66,7 +73,9 @@ class AppState {
       heaterState = HeaterState.stopped;
       runningTime = new Duration();
 
-      new Persistence().saveAppState(this);
+      if (onHeaterStopped != null) {
+        onHeaterStopped(this);
+      }
     }
   }
 

@@ -175,8 +175,6 @@ class _HeaterStarterHomeState extends State<HeaterStarterHomeScreen> {
     var duration = new Duration(minutes: minutes);
 
     await _appState.startHeater(duration).then((_) {
-      new Persistence().saveAppState(_appState);
-
       _startTimer();
       _notifications.showHeaterRunningNotification(duration);
       _updateStatusDisplay(duration);
@@ -193,7 +191,6 @@ class _HeaterStarterHomeState extends State<HeaterStarterHomeScreen> {
     if (_appState.heaterState != HeaterState.heating) {
       _timer.cancel();
       _notifications.clear();
-      new Persistence().saveAppState(_appState);
     }
 
     _updateStatusDisplay();
