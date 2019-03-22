@@ -4,7 +4,7 @@ import 'app_state_persistence.dart';
 
 import 'heater_control.dart';
 
-enum HeaterState { stopped, starting, heating, scheduled }
+enum HeaterState { stopped, heating }
 
 class Settings {
   String pin;
@@ -12,11 +12,12 @@ class Settings {
 }
 
 class AppState {
-  AppState(this.settings) {
+  AppState(this.settings, this.control) {
     heaterState = HeaterState.stopped;
   }
 
   Settings settings;
+  HeaterControl control;
 
   HeaterState heaterState;
   DateTime startTime;
@@ -32,8 +33,9 @@ class AppState {
 
   Future<void> startHeater(Duration duration) async {
     if (canStart()) {
-      var control = HeaterControl(settings.phoneNumber, settings.pin);
-      await control.start(duration.inMinutes).then((value) {
+      await control
+          .start(settings.phoneNumber, settings.pin, duration.inMinutes)
+          .then((_) {
         heaterState = HeaterState.heating;
         startTime = DateTime.now();
         runningTime = duration;

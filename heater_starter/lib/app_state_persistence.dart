@@ -3,6 +3,7 @@ import "dart:async";
 import "package:shared_preferences/shared_preferences.dart";
 
 import "app_state.dart";
+import "heater_control.dart";
 
 class Persistence {
   Future<AppState> loadAppState() async {
@@ -10,7 +11,7 @@ class Persistence {
 
     var settings = await _loadSettings();
 
-    var appState = new AppState(settings);
+    var appState = new AppState(settings, HeaterControl());
     appState.heaterState =
         HeaterState.values[preferences.getInt("heaterState") ?? 0];
     appState.startTime = new DateTime.fromMillisecondsSinceEpoch(

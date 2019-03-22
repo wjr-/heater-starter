@@ -1,13 +1,11 @@
+import "dart:async";
+
 import 'package:sms/sms.dart';
 
 import 'heater_control_messages.dart';
 
 class HeaterControl {
-  HeaterControl(this.phoneNumber, this.pin);
-  final String phoneNumber;
-  final String pin;
-
-  Future<void> start(int minutes) async {
+  Future<dynamic> start(String phoneNumber, String pin, int minutes) async {
     var startMessage = new StartMessage(pin: pin, duration: minutes);
     SmsSender sender = new SmsSender();
 
