@@ -33,8 +33,42 @@ void main() {
 
     await Future.delayed(new Duration(seconds: 2)).then((_) {
       appState.run();
-      expect(appState.heaterState, HeaterState.heating);
+      expect(appState.heaterState, HeaterState.stopped);
     });
+  });
+
+  test('Callback is called when heater starts', () {
+    var flag = false;
+    var appState = createAppState();
+    appState.addHeaterStartedCallback((_) => flag = true);
+
+    appState.startHeater(new Duration(seconds: 1));
+
+    expect(flag, true);
+  });
+
+  test('Callback is called when heater runs', () {
+    var flag = false;
+    var appState = createAppState();
+    appState.addHeaterRunningCallback((_) => flag = true);
+
+    appState.startHeater(new Duration(seconds: 1));
+    appState.run();
+
+    expect(flag, true);
+  });
+
+  test('Callback is called when heater stops', () async {
+    var flag = false;
+    var appState = createAppState();
+    appState.addHeaterStoppedCallback((_) => flag = true);
+
+    appState.startHeater(new Duration(seconds: 1));
+    await Future.delayed(new Duration(seconds: 2)).then((_) {
+      appState.run();
+    });
+
+    expect(flag, true);
   });
 }
 
