@@ -91,6 +91,7 @@ class _HeaterStarterHomeState extends State<HeaterStarterHomeScreen> {
                   )),
               MaterialButton(
                 color: Theme.of(context).buttonColor,
+                disabledColor: Theme.of(context).disabledColor,
                 height: 60,
                 onPressed: _appState.canStart() ? _startHeater : null,
                 child: Row(
