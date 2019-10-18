@@ -1,5 +1,5 @@
 name: heater_starter
-description: A new Flutter project.
+description: Remove controller for a car heater
 
 # The following defines the version and build number for your application.
 # A version number is three numbers separated by dots, like 1.2.43
@@ -15,9 +15,9 @@ environment:
 dependencies:
     flutter:
         sdk: flutter
-    sms: ^0.2.0
-    shared_preferences: ^0.5.1
-    flutter_local_notifications: ^0.5.2
+    sms: ^0.2.4
+    shared_preferences: ^0.5.3+5
+    flutter_local_notifications: ^0.8.4
 
 dev_dependencies:
     flutter_test:
