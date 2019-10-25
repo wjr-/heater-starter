@@ -35,10 +35,10 @@ class _HeaterStarterHomeState extends State<HeaterStarterHomeScreen> {
     _notifications.initialize();
 
     new Persistence().loadAppState().then((appState) {
-      appState.addHeaterStartedCallback(_startTimer);
+      appState.addHeaterStartedCallback(_updateStatusDisplay);
       appState.addHeaterStartedCallback(
           _notifications.showHeaterRunningNotification);
-      appState.addHeaterStartedCallback(_updateStatusDisplay);
+      appState.addHeaterStartedCallback(_startTimer);
 
       appState.addHeaterStoppedCallback((_) => _timer.cancel());
       appState.addHeaterStoppedCallback((_) => _notifications.clear());
