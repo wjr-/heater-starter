@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:heater_starter/start_heater_screen.dart';
 
 import 'app_state.dart';
 import 'app_state_persistence.dart';
@@ -34,21 +35,25 @@ class _HeaterStarterHomeState extends State<HeaterStarterHomeScreen> {
     _notifications.initialize();
 
     new Persistence().loadAppState().then((appState) {
-      appState.addHeaterStartedCallback((_) => _startTimer());
+      appState.addHeaterStartedCallback(_startTimer);
+      appState.addHeaterStartedCallback(
+          _notifications.showHeaterRunningNotification);
+      appState.addHeaterStartedCallback(_updateStatusDisplay);
 
       appState.addHeaterStoppedCallback((_) => _timer.cancel());
       appState.addHeaterStoppedCallback((_) => _notifications.clear());
+      appState.addHeaterStoppedCallback(_updateStatusDisplay);
 
-      appState.addHeaterRunningCallback((_) => _updateStatusDisplay());
+      appState.addHeaterRunningCallback(_updateStatusDisplay);
 
       _appState = appState;
       _appState.run();
 
       if (_appState.heaterState == HeaterState.heating) {
-        _startTimer();
+        _startTimer(_appState);
       }
 
-      _updateStatusDisplay();
+      _updateStatusDisplay(_appState);
     });
   }
 
@@ -123,79 +128,23 @@ class _HeaterStarterHomeState extends State<HeaterStarterHomeScreen> {
   }
 
   Future<void> _startHeater() async {
-    // TODO: check settings are in place
-    var minutes = await showDialog<int>(
-        context: context,
-        builder: (BuildContext context) {
-          return SimpleDialog(
-              contentPadding: EdgeInsets.only(top: 12, left: 10, bottom: 12),
-              children: <Widget>[
-                // TODO: prettify the dialog
-                SimpleDialogOption(
-                  onPressed: () {
-                    Navigator.pop(context, 10);
-                  },
-                  child: const Text('10'),
-                ),
-                SimpleDialogOption(
-                  onPressed: () {
-                    Navigator.pop(context, 15);
-                  },
-                  child: const Text('15'),
-                ),
-                SimpleDialogOption(
-                  onPressed: () {
-                    Navigator.pop(context, 20);
-                  },
-                  child: const Text('20'),
-                ),
-                SimpleDialogOption(
-                  onPressed: () {
-                    Navigator.pop(context, 25);
-                  },
-                  child: const Text('25'),
-                ),
-                SimpleDialogOption(
-                  onPressed: () {
-                    Navigator.pop(context, 30);
-                  },
-                  child: const Text('30'),
-                ),
-                SimpleDialogOption(
-                  onPressed: () {
-                    Navigator.pop(context, 35);
-                  },
-                  child: const Text('35'),
-                ),
-                SimpleDialogOption(
-                  onPressed: () {
-                    Navigator.pop(context, 40);
-                  },
-                  child: const Text('40'),
-                ),
-              ]);
-        });
-
-    if (minutes == null) {
-      return;
-    }
-
-    var duration = new Duration(minutes: minutes);
-
-    await _appState.startHeater(duration).then((_) {
-      _notifications.showHeaterRunningNotification(duration);
-      _updateStatusDisplay(duration);
-    });
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) => StartHeaterScreen(
+                appState: _appState,
+              )),
+    );
   }
 
-  void _startTimer() {
+  void _startTimer(AppState appState) {
     _timer =
-        new Timer.periodic(new Duration(seconds: 5), (_) => _appState.run());
+        new Timer.periodic(new Duration(seconds: 5), (_) => appState.run());
   }
 
-  void _updateStatusDisplay([Duration remainingTime]) {
+  void _updateStatusDisplay(AppState appState) {
     var newText = "??";
-    remainingTime = remainingTime ?? _appState.getRemainingTime();
+    var remainingTime = _appState.getRemainingTime();
 
     if (_appState.heaterState == HeaterState.stopped) {
       newText = "Ready";

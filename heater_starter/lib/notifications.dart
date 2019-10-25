@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:heater_starter/app_state.dart';
 
 class Notifications {
   FlutterLocalNotificationsPlugin _notificationsPlugin;
@@ -16,8 +17,8 @@ class Notifications {
     this._notificationsPlugin.initialize(initializationSettings);
   }
 
-  Future<void> showHeaterRunningNotification(Duration duration) async {
-    var until = DateTime.now().add(duration);
+  Future<void> showHeaterRunningNotification(AppState appState) async {
+    var until = DateTime.now().add(appState.runningTime);
     var untilText = until.toIso8601String();
     untilText = untilText.substring(11, 16);
     return _showNotification("Heating", "Heating until " + untilText, 0);
