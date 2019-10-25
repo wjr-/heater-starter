@@ -17,48 +17,45 @@ class _StartHeaterState extends State<StartHeaterScreen> {
 
   final AppState _appState;
 
+  static const runTimes = [10, 15, 20, 25, 30, 35, 40, 45];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text("Start")),
       body: Center(
-        child: Padding(
-          padding: EdgeInsets.only(top: 50, left: 30, right: 30),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: _createButtons(),
-          ),
-        ),
-      ),
+          child: ListView.builder(
+        padding: const EdgeInsets.all(10),
+        itemCount: runTimes.length,
+        itemBuilder: _createListItems,
+      )),
     );
   }
 
-  List<Widget> _createButtons() {
-    const runTimes = [10, 15, 20, 25, 30, 35, 40, 45];
-    var buttons = List<Widget>();
-    for (var runTime in runTimes) {
-      buttons.add(MaterialButton(
-        onPressed: () => _startHeater(runTime),
+  Widget _createListItems(BuildContext context, int index) {
+    return Padding(
+      padding: const EdgeInsets.all(10),
+      child: MaterialButton(
+        onPressed: () => _startHeater(runTimes[index]),
         color: Theme.of(context).buttonColor,
         disabledColor: Theme.of(context).disabledColor,
         padding: const EdgeInsets.all(10),
+        height: 60,
         child:
             Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
           Icon(Icons.play_arrow),
           Text(
-            runTime.toString() + " mins ",
+            runTimes[index].toString() + " mins ",
             style: const TextStyle(fontSize: 20),
           ),
           Icon(Icons.access_time),
           Text(
-            _getButtonUntilText(runTime),
+            _getButtonUntilText(runTimes[index]),
             style: const TextStyle(fontSize: 20),
           ),
         ]),
-      ));
-      buttons.add(SizedBox(height: 15));
-    }
-    return buttons;
+      ),
+    );
   }
 
   Future<void> _startHeater(int runTime) async {
