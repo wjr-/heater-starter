@@ -1,6 +1,6 @@
 import "dart:async";
 
-import 'package:flutter_sms/flutter_sms.dart';
+import 'package:sms/sms.dart';
 
 import 'heater_control_messages.dart';
 
@@ -19,8 +19,7 @@ class HeaterControl {
   }
 
   Future _sendSMS(String message, String recipient) async {
-    var recipients = [recipient];
-
-    return await FlutterSms.sendSMS(message: message, recipients: recipients);
+    var sender = new SmsSender();
+    return await sender.sendSms(new SmsMessage(recipient, message));
   }
 }
