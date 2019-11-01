@@ -35,6 +35,8 @@ class _HeaterStarterHomeState extends State<HeaterStarterHomeScreen> {
     _notifications.initialize();
 
     new Persistence().loadAppState().then((appState) {
+      appState.addHeaterStartingCallback(_updateStatusDisplay);
+
       appState.addHeaterStartedCallback(_updateStatusDisplay);
       appState.addHeaterStartedCallback(
           _notifications.showHeaterRunningNotification);
@@ -146,14 +148,20 @@ class _HeaterStarterHomeState extends State<HeaterStarterHomeScreen> {
     var newText = "??";
     var remainingTime = _appState.getRemainingTime();
 
-    if (_appState.heaterState == HeaterState.stopped) {
-      newText = "Ready";
-    } else if (_appState.heaterState == HeaterState.heating) {
-      if (remainingTime.inMinutes < 1 && remainingTime.inSeconds < 10) {
-        newText = "Stopping..";
-      } else {
-        newText = remainingTime.toString().substring(2, 6) + "0";
-      }
+    switch (appState.heaterState) {
+      case HeaterState.stopped:
+        newText = "Ready";
+        break;
+      case HeaterState.starting:
+        newText = "Starting..";
+        break;
+      case HeaterState.heating:
+        if (remainingTime.inMinutes < 1 && remainingTime.inSeconds < 10) {
+          newText = "Stopping..";
+        } else {
+          newText = remainingTime.toString().substring(2, 6) + "0";
+        }
+        break;
     }
 
     setState(() {

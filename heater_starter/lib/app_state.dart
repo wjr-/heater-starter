@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'heater_control.dart';
 
-enum HeaterState { stopped, heating }
+enum HeaterState { stopped, starting, heating }
 
 class Settings {
   String pin;
@@ -16,6 +16,8 @@ class AppState {
     heaterState = HeaterState.stopped;
   }
 
+  List<AppStateEventHandler> _onHeaterStarting =
+      new List<AppStateEventHandler>();
   List<AppStateEventHandler> _onHeaterStarted =
       new List<AppStateEventHandler>();
   List<AppStateEventHandler> _onHeaterStopped =
@@ -29,6 +31,10 @@ class AppState {
   HeaterState heaterState;
   DateTime startTime;
   Duration runningTime;
+
+  void addHeaterStartingCallback(AppStateEventHandler handler) {
+    _onHeaterStarting.add(handler);
+  }
 
   void addHeaterStartedCallback(AppStateEventHandler handler) {
     _onHeaterStarted.add(handler);
@@ -53,13 +59,12 @@ class AppState {
   Future<void> startHeater(Duration duration) async {
     if (canStart()) {
       await control
-          .start(settings.phoneNumber, settings.pin, duration.inMinutes)
+          .start(settings.phoneNumber, settings.pin, duration.inMinutes,
+              _heaterStarted)
           .then((_) {
-        heaterState = HeaterState.heating;
-        startTime = DateTime.now();
+        heaterState = HeaterState.starting;
         runningTime = duration;
-
-        _onHeaterStarted.forEach((callback) => callback(this));
+        _onHeaterStarting.forEach((handler) => handler(this));
       });
     }
   }
@@ -80,6 +85,12 @@ class AppState {
     }
   }
 
+  void _heaterStarted() {
+    heaterState = HeaterState.heating;
+    startTime = DateTime.now();
+    _onHeaterStarted.forEach((handler) => handler(this));
+  }
+
   bool _canStop() {
     return heaterState == HeaterState.heating;
   }
@@ -89,7 +100,7 @@ class AppState {
       heaterState = HeaterState.stopped;
       runningTime = new Duration();
 
-      _onHeaterStopped.forEach((callback) => callback(this));
+      _onHeaterStopped.forEach((handler) => handler(this));
     }
   }
 
