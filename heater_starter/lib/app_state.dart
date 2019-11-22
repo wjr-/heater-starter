@@ -12,6 +12,9 @@ class Settings {
 typedef void AppStateEventHandler(AppState appState);
 
 class AppState {
+  final int _heaterStartDelaySeconds =
+      30; // simulates the delay from sending the sms to heater actually starting
+
   AppState(this.settings, this.control) {
     heaterState = HeaterState.stopped;
   }
@@ -58,11 +61,11 @@ class AppState {
 
   Future<void> startHeater(Duration duration) async {
     if (canStart()) {
+      heaterState = HeaterState.starting;
       await control
           .start(settings.phoneNumber, settings.pin, duration.inMinutes,
               _heaterStarted)
           .then((_) {
-        heaterState = HeaterState.starting;
         runningTime = duration;
         _onHeaterStarting.forEach((handler) => handler(this));
       });
@@ -80,7 +83,7 @@ class AppState {
 
     _onHeaterRunning.forEach((callback) => callback(this));
 
-    if (_hasBeenRunningFor() > runningTime) {
+    if (_hasBeenRunningFor() >= runningTime) {
       _stopHeater();
     }
   }
