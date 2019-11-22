@@ -13,7 +13,7 @@ typedef void AppStateEventHandler(AppState appState);
 
 class AppState {
   final int _heaterStartDelaySeconds =
-      30; // simulates the delay from sending the sms to heater actually starting
+      10; // simulates the delay from sending the sms to heater actually starting
 
   AppState(this.settings, this.control) {
     heaterState = HeaterState.stopped;
@@ -90,7 +90,8 @@ class AppState {
 
   void _heaterStarted() {
     heaterState = HeaterState.heating;
-    startTime = DateTime.now();
+    startTime =
+        DateTime.now().add(new Duration(seconds: _heaterStartDelaySeconds));
     _onHeaterStarted.forEach((handler) => handler(this));
   }
 
