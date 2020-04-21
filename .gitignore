@@ -20,3 +20,4 @@ doc/api/
 *.js.deps
 *.js.map
 heater_starter/ios/Flutter/flutter_export_environment.sh
+heater_starter/.flutter-plugins-dependencies
