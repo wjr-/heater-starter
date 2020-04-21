@@ -7,15 +7,13 @@ import 'heater_control_messages.dart';
 typedef void HeaterStartedEventHandler();
 
 class HeaterControl {
-  Future<dynamic> start(String phoneNumber, String pin, int minutes,
-      HeaterStartedEventHandler onHeaterStarted) async {
+  Future<void> start(String phoneNumber, String pin, int minutes) async {
     var startMessage = new StartMessage(pin: pin, duration: minutes);
 
-    return await _sendSMS(startMessage.toString(), phoneNumber)
-        .then((_) => onHeaterStarted());
+    return _sendSMS(startMessage.toString(), phoneNumber);
   }
 
-  Future _sendSMS(String message, String recipient) async {
+  Future<void> _sendSMS(String message, String recipient) async {
     var sender = new SmsSender();
     return await sender.sendSms(new SmsMessage(recipient, message));
   }

@@ -60,7 +60,8 @@ class _StartHeaterState extends State<StartHeaterScreen> {
 
   Future<void> _startHeater(int runTime) async {
     var duration = Duration(minutes: runTime);
-    await _appState.startHeater(duration).then((_) => Navigator.pop(context));
+    await _appState.startHeater(duration);
+    Navigator.pop(context);
   }
 
   String _getButtonUntilText(int runTime) {

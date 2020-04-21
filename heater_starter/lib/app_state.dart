@@ -61,14 +61,13 @@ class AppState {
 
   Future<void> startHeater(Duration duration) async {
     if (canStart()) {
-      heaterState = HeaterState.starting;
-      await control
-          .start(settings.phoneNumber, settings.pin, duration.inMinutes,
-              _heaterStarted)
-          .then((_) {
-        runningTime = duration;
-        _onHeaterStarting.forEach((handler) => handler(this));
-      });
+      runningTime = duration;
+      _heaterStarting();
+
+      await control.start(
+          settings.phoneNumber, settings.pin, duration.inMinutes);
+
+      _heaterStarted();
     }
   }
 
@@ -86,6 +85,11 @@ class AppState {
     if (_hasBeenRunningFor() >= runningTime) {
       _stopHeater();
     }
+  }
+
+  void _heaterStarting() {
+    heaterState = HeaterState.starting;
+    _onHeaterStarting.forEach((handler) => handler(this));
   }
 
   void _heaterStarted() {
